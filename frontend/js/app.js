@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000/api/expenses';
+const API = 'https://budget-tracker-production-6872.up.railway.app/api/expenses';
 
 // Load expenses when page starts
 document.addEventListener('DOMContentLoaded', fetchExpenses);
