@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+const authRoutes = require('./routes/auth');
+
 const expenseRoutes = require('./routes/expenses');
 
 const app = express();
@@ -13,6 +15,7 @@ app.use(express.json());
 
 // All expense routes live under /api/expenses
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', function(req, res) {
   res.json({ message: 'Budget Tracker API is running' });

@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const Expense = require('../models/expense');
+const auth = require('../middleware/auth');
 
-// GET all expenses
-router.get('/', async function(req, res) {
+// GET all expenses — only for logged in user
+router.get('/', auth, async function(req, res) {
   try {
-    const expenses = await Expense.find().sort({ date: -1 });
+    const expenses = await Expense.find({ user: req.userId }).sort({ date: -1 });
     res.json(expenses);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching expenses', error });
@@ -13,9 +14,10 @@ router.get('/', async function(req, res) {
 });
 
 // POST a new expense
-router.post('/', async function(req, res) {
+router.post('/', auth, async function(req, res) {
   try {
     const expense = new Expense({
+      user: req.userId,
       desc: req.body.desc,
       amount: req.body.amount,
       category: req.body.category
@@ -27,8 +29,8 @@ router.post('/', async function(req, res) {
   }
 });
 
-// DELETE an expense by ID
-router.delete('/:id', async function(req, res) {
+// DELETE an expense
+router.delete('/:id', auth, async function(req, res) {
   try {
     await Expense.findByIdAndDelete(req.params.id);
     res.json({ message: 'Expense deleted' });

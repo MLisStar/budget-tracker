@@ -1,11 +1,39 @@
 const API = 'https://budget-tracker-production-6872.up.railway.app/api/expenses';
 
 // Load expenses when page starts
-document.addEventListener('DOMContentLoaded', fetchExpenses);
+document.addEventListener('DOMContentLoaded', function() {
+  // If no token redirect to login
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
 
+  // Show username in the header
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user) {
+    document.getElementById('username').textContent = 'Hi, ' + user.name;
+  }
+
+  fetchExpenses();
+});
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
 async function fetchExpenses() {
   try {
-    const response = await fetch(API);
+    const response = await fetch(API, {
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      }
+    });
     const expenses = await response.json();
     renderExpenses(expenses);
     updateTotal(expenses);
@@ -29,7 +57,8 @@ async function addExpense() {
     const response = await fetch(API, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${getToken()}`
       },
       body: JSON.stringify({ desc, amount: parseFloat(amount), category })
     });
@@ -47,7 +76,10 @@ async function addExpense() {
 async function deleteExpense(id) {
   try {
     await fetch(API + '/' + id, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${getToken()}`
+      }
     });
     fetchExpenses(); // refresh the list
   } catch (error) {

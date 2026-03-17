@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
 const expenseSchema = new mongoose.Schema({
-  desc: {
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },  // Placeholder for user reference (to be implemented later)
+    desc: {
     type: String,
     required: true
   },
