@@ -1,19 +1,41 @@
 # Budget Tracker KES 🇰🇪
 
-A personal finance tracker built with HTML, CSS, and JavaScript.
+A full stack personal finance tracker.
 
-## Features
+## Live Features
 - Add and delete expenses in Kenyan Shillings (KES)
 - Categorise spending (food, transport, rent, entertainment)
 - Live doughnut chart showing spending by category
 - Bar chart showing top expenses
-- Data persists in browser localStorage
+- Data stored permanently in MongoDB cloud database
 
 ## Tech Stack
+**Frontend
 - HTML5, CSS3, Vanilla JavaScript
 - Chart.js for data visualisation
 
-## Coming soon
-- Node.js + Express backend
-- MongoDB database
-- User authentication
+**Backend
+- Node.js + Express REST API
+- MongoDB + Mongoose
+- CORS, dotenv
+
+## API Endpoints
+| Method | Endpoint | Description|
+| GET | /api/expense | Fetch all expenses |
+| POST | /api/expenses | create new expense |
+| DELETE | /api/expenses/:id | Delete an expense
+
+## Run Locally
+```bash
+## Backend
+cd backend
+npm install
+node server.js
+
+## Frontend
+Open frontend/index.html with Server
+```
+
+## Environment Variables
+Create a `.env` file in the backend folder:
+
