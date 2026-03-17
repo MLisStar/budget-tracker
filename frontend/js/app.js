@@ -1,47 +1,63 @@
-// array to add all expenses to
-let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
-let categoryChartInstance = null;
-let barChartInstance = null;
-renderExpenses();
-updateTotal();
-renderCharts();
+const API = 'http://localhost:5000/api/expenses';
 
-function addExpense() {
-  // Step 1: Grab what the user typed
+// Load expenses when page starts
+document.addEventListener('DOMContentLoaded', fetchExpenses);
+
+async function fetchExpenses() {
+  try {
+    const response = await fetch(API);
+    const expenses = await response.json();
+    renderExpenses(expenses);
+    updateTotal(expenses);
+    renderCharts(expenses);
+  } catch (error) {
+    console.log('Error fetching expenses:', error);
+  }
+}
+
+async function addExpense() {
   const desc = document.getElementById('desc').value;
   const amount = document.getElementById('amount').value;
   const category = document.getElementById('category').value;
 
-  // Step 2: Basic validation — don't add empty entries
   if (desc === '' || amount === '' || amount <= 0) {
     alert('Please enter a description and a valid amount');
     return;
   }
 
-  // Step 3: Build an expense object
-  const expense = {
-    id: Date.now(),        // unique ID using current time
-    desc: desc,
-    amount: parseFloat(amount),  // converts string to a number
-    category: category
-  };
+  try {
+    const response = await fetch(API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ desc, amount: parseFloat(amount), category })
+    });
 
-  // Step 4: Add it to our array
-  expenses.push(expense);
-  saveToStorage();
-
-  // Step 5: Update the page
-  renderExpenses();
-  updateTotal();
-
-  // Step 6: Clear the input fields
-  document.getElementById('desc').value = '';
-  document.getElementById('amount').value = '';
+    if (response.ok) {
+      document.getElementById('desc').value = '';
+      document.getElementById('amount').value = '';
+      fetchExpenses(); // refresh the list
+    }
+  } catch (error) {
+    console.log('Error adding expense:', error);
+  }
 }
 
-function renderExpenses() {
+async function deleteExpense(id) {
+  try {
+    await fetch(API + '/' + id, {
+      method: 'DELETE'
+    });
+    fetchExpenses(); // refresh the list
+  } catch (error) {
+    console.log('Error deleting expense:', error);
+  }
+}
+
+function renderExpenses(expenses) {
   const list = document.getElementById('expense-list');
-  list.innerHTML = '';  // clear the list first
+  list.innerHTML = '';
 
   expenses.forEach(function(expense) {
     const li = document.createElement('li');
@@ -49,38 +65,23 @@ function renderExpenses() {
       <span class="expense-desc">${expense.desc}</span>
       <span class="expense-cat">${expense.category}</span>
       <span class="expense-amount">KES ${expense.amount.toLocaleString()}</span>
-      <button onclick="deleteExpense(${expense.id})">Delete</button>
+      <button onclick="deleteExpense('${expense._id}')">Delete</button>
     `;
     list.appendChild(li);
   });
 }
 
-function updateTotal() {
-  // Add up all amounts using reduce
+function updateTotal(expenses) {
   const total = expenses.reduce(function(sum, expense) {
     return sum + expense.amount;
   }, 0);
-
   document.getElementById('total').textContent = 'KES ' + total.toLocaleString();
 }
 
-function deleteExpense(id) {
-  // Keep every expense EXCEPT the one with this id
-  expenses = expenses.filter(function(expense) {
-    return expense.id !== id;
-  });
-  saveToStorage();
+let categoryChartInstance = null;
+let barChartInstance = null;
 
-  renderExpenses();
-  updateTotal();
-}
-function saveToStorage() {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
-}
-function renderCharts() {
-  // --- DOUGHNUT CHART: spending by category ---
-
-  // Group expenses by category and sum the amounts
+function renderCharts(expenses) {
   const categoryTotals = {};
   expenses.forEach(function(expense) {
     if (categoryTotals[expense.category]) {
@@ -93,7 +94,6 @@ function renderCharts() {
   const categoryLabels = Object.keys(categoryTotals);
   const categoryData = Object.values(categoryTotals);
 
-  // Destroy old chart before drawing a new one
   if (categoryChartInstance) categoryChartInstance.destroy();
 
   const ctx1 = document.getElementById('categoryChart').getContext('2d');
@@ -109,15 +109,10 @@ function renderCharts() {
       }]
     },
     options: {
-      plugins: {
-        legend: { position: 'bottom' }
-      }
+      plugins: { legend: { position: 'bottom' } }
     }
   });
 
-  // --- BAR CHART: top expenses by amount ---
-
-  // Sort expenses highest to lowest, take top 5
   const top5 = [...expenses]
     .sort(function(a, b) { return b.amount - a.amount; })
     .slice(0, 5);
@@ -148,5 +143,4 @@ function renderCharts() {
       }
     }
   });
-  renderCharts();
 }
