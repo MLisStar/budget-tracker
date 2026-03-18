@@ -2,11 +2,14 @@
 
 A full stack personal finance tracker with user authentication and data visualisation.
 
+# Live Demo
+** App ** -- https://budget-tracker-ten-teal.vercel.app/
+** API ** -- budget-tracker-production-6872.up.railway.app
 
 ## Live Features
 - Register and login with JWT authentication
 - Password hashed with bcrypt - never stored as plain text
-Each user sees only their own expense
+- Each user sees only their own expense
 - Add and delete expenses in Kenyan Shillings (KES)
 - Categorise spending (food, transport, rent, entertainment)
 - Live doughnut chart showing spending by category
@@ -20,13 +23,15 @@ Each user sees only their own expense
 - React Router for navigation
 - Tailwind CSS for styling
 - ReCharts for data visualisation
+- Axios for API calls
+- Deployed on Vercel
 
 **Backend
 - Node.js + Express REST API
 - JWT authentication
 - bcryptjs for password hashing
 - MongoDB + Mongoose
-- CORS, dotenv
+- Deployed on Railway
 
 ## API Endpoints
 | Method | Endpoint | Description| Auth Required
@@ -55,3 +60,49 @@ Create a `.env` file in the backend folder:
 MONGO_URI=ConnectionString
 JWT_SECRET=SecretKey
 
+
+## Project Structure
+```
+budget-tracker
+├─ backend
+│  ├─ middleware
+│  │  └─ auth.js
+│  ├─ models
+│  │  ├─ expense.js
+│  │  └─ user.js
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ routes
+│  │  ├─ auth.js
+│  │  └─ expenses.js
+│  └─ server.js
+├─ frontend-react
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ postcss.config.js
+│  ├─ public
+│  │  ├─ favicon.svg
+│  │  └─ icons.svg
+│  ├─ src
+│  │  ├─ api.js
+│  │  ├─ App.jsx
+│  │  ├─ assets
+│  │  │  └─ hero.png
+│  │  ├─ components
+│  │  │  ├─ Charts.jsx
+│  │  │  ├─ ExpenseForm.jsx
+│  │  │  ├─ ExpenseList.jsx
+│  │  │  └─ Navbar.jsx
+│  │  ├─ index.css
+│  │  ├─ main.jsx
+│  │  └─ pages
+│  │     ├─ Dashboard.jsx
+│  │     ├─ Login.jsx
+│  │     └─ Register.jsx
+│  ├─ tailwind.config.js
+│  └─ vite.config.js
+└─ README.md
+
+```
