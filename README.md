@@ -1,6 +1,7 @@
 # Budget Tracker KES 🇰🇪
 
-A full stack personal finance tracker.
+A full stack personal finance tracker with user authentication and data visualisation.
+
 
 ## Live Features
 - Register and login with JWT authentication
@@ -11,11 +12,14 @@ Each user sees only their own expense
 - Live doughnut chart showing spending by category
 - Bar chart showing top expenses
 - Data stored permanently in MongoDB cloud database
+- Fully responsive - works on mobile and desktop.
 
 ## Tech Stack
 **Frontend
-- HTML5, CSS3, Vanilla JavaScript
-- Chart.js for data visualisation
+- React 18 with Vite
+- React Router for navigation
+- Tailwind CSS for styling
+- ReCharts for data visualisation
 
 **Backend
 - Node.js + Express REST API
@@ -40,7 +44,9 @@ npm install
 node server.js
 
 ## Frontend
-Open frontend/index.html with Server
+cd frontend-react
+npm install
+npm run dev
 ```
 
 ## Environment Variables
